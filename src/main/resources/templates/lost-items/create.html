@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Déclarer un objet perdu')}"></head>
+<body>
+    <!-- Barre de navigation -->
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    
+    <div class="container mt-4">
+        <!-- Messages d'alerte -->
+        <div th:replace="~{fragments/messages :: alerts}"></div>
+        
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0"><i class="fas fa-search me-2"></i> Déclarer un objet perdu</h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/lost-items/create}" th:object="${lostItemRequest}" method="post" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Titre de l'annonce</label>
+                                <input type="text" class="form-control" id="title" th:field="*{title}" 
+                                       placeholder="Ex: Portefeuille perdu à la gare" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Catégorie</label>
+                                <select class="form-select" id="category" th:field="*{category}" required>
+                                    <option value="" selected disabled>Choisir une catégorie</option>
+                                    <option th:each="cat : ${categories}" 
+                                            th:value="${cat}" 
+                                            th:text="${cat.displayName}">Catégorie</option>
+                                </select>
+                                <div class="text-danger" th:if="${#fields.hasErrors('category')}" th:errors="*{category}"></div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description détaillée</label>
+                                <textarea class="form-control" id="description" th:field="*{description}" rows="4" 
+                                          placeholder="Décrivez l'objet avec le plus de détails possible (couleur, marque, contenu, signes distinctifs...)" 
+                                          required></textarea>
+                                <div class="text-danger" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="lostDate" class="form-label">Date de perte</label>
+                                    <input type="date" class="form-control" id="lostDate" th:field="*{lostDate}" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('lostDate')}" th:errors="*{lostDate}"></div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="location" class="form-label">Lieu de perte</label>
+                                    <input type="text" class="form-control" id="location" th:field="*{location}" 
+                                           placeholder="Ex: Gare de Lyon, Paris" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('location')}" th:errors="*{location}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="image" class="form-label">Photo de l'objet (optionnel)</label>
+                                <input type="file" class="form-control" id="image" name="image" accept="image/*">
+                                <div class="form-text">Formats acceptés: JPG, PNG, GIF. Taille max: 5 MB</div>
+                            </div>
+                            
+                            <div class="alert alert-info">
+                                <i class="fas fa-info-circle me-2"></i> Votre annonce sera vérifiée par nos équipes avant d'être publiée.
+                            </div>
+                            
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                <a th:href="@{/}" class="btn btn-light me-md-2">Annuler</a>
+                                <button type="submit" class="btn btn-primary">Soumettre l'annonce</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: header('Détail objet trouvé')}"></head>
+<body>
+    <!-- Barre de navigation -->
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    
+    <div class="container mt-4">
+        <!-- Messages d'alerte -->
+        <div th:replace="~{fragments/messages :: alerts}"></div>
+        
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/}">Accueil</a></li>
+                        <li class="breadcrumb-item"><a th:href="@{/found-items}">Objets trouvés</a></li>
+                        <li class="breadcrumb-item active" aria-current="page" th:text="${item.title}">Détail de l'objet</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h3 class="mb-0"><i class="fas fa-hand-holding me-2"></i> <span th:text="${item.title}">Titre de l'objet trouvé</span></h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <!-- Image de l'objet -->
+                            <div class="col-md-4 mb-4">
+                                <div th:if="${item.imageUrl}" class="text-center bg-light rounded mb-3" style="height: 280px; overflow: hidden;">
+                                    <img th:src="@{'/uploads/' + ${item.imageUrl}}" class="img-fluid h-100" alt="Image de l'objet" 
+                                         style="object-fit: contain;">
+                                </div>
+                                <div th:unless="${item.imageUrl}" class="text-center bg-light rounded d-flex align-items-center justify-content-center mb-3" style="height: 280px;">
+                                    <i class="fas fa-image fa-5x text-muted"></i>
+                                </div>
+                                
+                                <!-- Informations rapides -->
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Informations</h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span><i class="fas fa-tag me-2"></i> Catégorie</span>
+                                                <span class="badge bg-success" th:text="${item.categoryDisplayName}">Catégorie</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span><i class="fas fa-calendar-alt me-2"></i> Date de découverte</span>
+                                                <span th:text="${#temporals.format(item.date, 'dd/MM/yyyy')}">Date</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span><i class="fas fa-map-marker-alt me-2"></i> Lieu</span>
+                                                <span th:text="${item.location}">Lieu</span>
+                                            </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center">
+                                                <span><i class="fas fa-user me-2"></i> Trouvé par</span>
+                                                <span th:text="${item.ownerName}">Nom du déclarant</span>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Détails de l'objet -->
+                            <div class="col-md-8">
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Description détaillée</h5>
+                                        <p class="card-text" th:text="${item.description}">Description détaillée de l'objet trouvé.</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Contact et actions -->
+                                <div class="card mb-4">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Cet objet vous appartient?</h5>
+                                        <p class="card-text">Si vous pensez être le propriétaire de cet objet, vous pouvez le réclamer en cliquant sur le bouton ci-dessous.</p>
+                                        
+                                        <div sec:authorize="isAuthenticated()">
+                                            <div th:if="${item.isOwner}" class="alert alert-info">
+                                                <i class="fas fa-info-circle me-2"></i> Vous avez déclaré cet objet trouvé.
+                                            </div>
+                                            
+                                            <div th:unless="${item.isOwner}">
+                                                <form th:action="@{/found-items/claim/{id}(id=${item.id})}" method="post" style="display: inline;">
+                                                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#claimModal">
+                                                        <i class="fas fa-hand-point-up me-2"></i> Réclamer cet objet
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        
+                                        <div sec:authorize="!isAuthenticated()" class="alert alert-warning">
+                                            <i class="fas fa-exclamation-triangle me-2"></i> 
+                                            Vous devez <a th:href="@{/auth/login}">vous connecter</a> pour réclamer cet objet.
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Actions pour le propriétaire de l'annonce -->
+                                <div th:if="${item.isOwner}" class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">Gestion de l'annonce</h5>
+                                        <div class="d-flex gap-2">
+                                            <a th:href="@{/found-items/edit/{id}(id=${item.id})}" class="btn btn-warning">
+                                                <i class="fas fa-edit me-2"></i> Modifier
+                                            </a>
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                                                <i class="fas fa-trash-alt me-2"></i> Supprimer
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de réclamation -->
+    <div class="modal fade" id="claimModal" tabindex="-1" aria-labelledby="claimModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="claimModalLabel">Réclamer cet objet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Pour prouver que cet objet vous appartient, veuillez fournir des informations supplémentaires qui ne sont pas mentionnées dans la description (signes particuliers, contenu, etc.).</p>
+                    <form id="claimForm">
+                        <div class="mb-3">
+                            <label for="claimDetails" class="form-label">Détails de votre réclamation</label>
+                            <textarea class="form-control" id="claimDetails" rows="4" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form th:action="@{/found-items/claim/{id}(id=${item.id})}" method="post">
+                        <button type="submit" class="btn btn-success">Envoyer ma réclamation</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de suppression -->
+    <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deleteModalLabel">Confirmer la suppression</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir supprimer cette annonce? Cette action est irréversible.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form th:action="@{/found-items/delete/{id}(id=${item.id})}" method="post">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

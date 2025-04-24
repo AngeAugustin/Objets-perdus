@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+    <nav th:fragment="navbar" class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="fas fa-search me-2"></i> Objets Perdus & Trouvés
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" 
+                    aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/}">Accueil</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/lost-items}">Objets Perdus</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/found-items}">Objets Trouvés</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/about}">À Propos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/contact}">Contact</a>
+                    </li>
+                </ul>
+                
+                <ul class="navbar-nav">
+                    <!-- Pour les utilisateurs authentifiés -->
+                    <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" 
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-bell me-1"></i>
+                            <span sec:authentication="name">Utilisateur</span>
+                            <span class="badge bg-danger rounded-pill" th:if="${unreadNotifications > 0}" 
+                                  th:text="${unreadNotifications}">0</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" th:href="@{/user/dashboard}">Tableau de bord</a></li>
+                            <li><a class="dropdown-item" th:href="@{/user/lost-items}">Mes objets perdus</a></li>
+                            <li><a class="dropdown-item" th:href="@{/user/found-items}">Mes objets trouvés</a></li>
+                            <li><a class="dropdown-item" th:href="@{/user/notifications}">
+                                Notifications
+                                <span class="badge bg-danger rounded-pill" th:if="${unreadNotifications > 0}" 
+                                      th:text="${unreadNotifications}">0</span>
+                            </a></li>
+                            <li><a class="dropdown-item" th:href="@{/user/profile}">Mon profil</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <!-- Menu admin uniquement pour les admins -->
+                            <li sec:authorize="hasRole('ADMIN')">
+                                <a class="dropdown-item" th:href="@{/admin/dashboard}">Administration</a>
+                            </li>
+                            <li sec:authorize="hasRole('ADMIN')"><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/auth/logout}" method="post">
+                                    <button type="submit" class="dropdown-item">Déconnexion</button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+                    
+                    <!-- Pour les utilisateurs non authentifiés -->
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" th:href="@{/auth/login}">Connexion</a>
+                    </li>
+                    <li class="nav-item" sec:authorize="!isAuthenticated()">
+                        <a class="nav-link" th:href="@{/auth/register}">Inscription</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</body>
+</html>

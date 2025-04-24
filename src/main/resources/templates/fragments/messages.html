@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <!-- Fragment pour les messages d'alerte -->
+    <div th:fragment="alerts">
+        <!-- Message de succès -->
+        <div class="alert alert-success alert-dismissible fade show" role="alert" th:if="${successMessage}">
+            <i class="fas fa-check-circle me-2"></i>
+            <span th:text="${successMessage}">Message de succès</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <!-- Message d'erreur -->
+        <div class="alert alert-danger alert-dismissible fade show" role="alert" th:if="${errorMessage}">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            <span th:text="${errorMessage}">Message d'erreur</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <!-- Message d'information -->
+        <div class="alert alert-info alert-dismissible fade show" role="alert" th:if="${infoMessage}">
+            <i class="fas fa-info-circle me-2"></i>
+            <span th:text="${infoMessage}">Message d'information</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <!-- Message d'avertissement -->
+        <div class="alert alert-warning alert-dismissible fade show" role="alert" th:if="${warningMessage}">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            <span th:text="${warningMessage}">Message d'avertissement</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+</body>
+</html>

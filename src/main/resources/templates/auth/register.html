@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Inscription')}"></head>
+<body>
+    <!-- Barre de navigation -->
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h4 class="mb-0"><i class="fas fa-user-plus me-2"></i> Créer un compte</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Messages d'alerte -->
+                        <div th:replace="~{fragments/messages :: alerts}"></div>
+                        
+                        <form th:action="@{/auth/register}" th:object="${user}" method="post">
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label for="firstname" class="form-label">Prénom</label>
+                                    <input type="text" class="form-control" id="firstname" th:field="*{firstname}" 
+                                           placeholder="Entrez votre prénom" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('firstname')}" th:errors="*{firstname}"></div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="lastname" class="form-label">Nom</label>
+                                    <input type="text" class="form-control" id="lastname" th:field="*{lastname}" 
+                                           placeholder="Entrez votre nom" required>
+                                    <div class="text-danger" th:if="${#fields.hasErrors('lastname')}" th:errors="*{lastname}"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="email" class="form-label">Adresse email</label>
+                                <input type="email" class="form-control" id="email" th:field="*{email}" 
+                                       placeholder="Entrez votre email" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="phoneNumber" class="form-label">Numéro de téléphone (optionnel)</label>
+                                <input type="tel" class="form-control" id="phoneNumber" th:field="*{phoneNumber}" 
+                                       placeholder="Entrez votre numéro de téléphone">
+                                <div class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Mot de passe</label>
+                                <input type="password" class="form-control" id="password" th:field="*{password}" 
+                                       placeholder="Choisissez un mot de passe (minimum 6 caractères)" required>
+                                <div class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="terms" required>
+                                <label class="form-check-label" for="terms">
+                                    J'accepte les <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">conditions d'utilisation</a>
+                                </label>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">S'inscrire</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer bg-light text-center py-3">
+                        <p class="mb-0">Déjà inscrit? <a th:href="@{/auth/login}" class="text-primary">Se connecter</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Conditions d'utilisation -->
+    <div class="modal fade" id="termsModal" tabindex="-1" aria-labelledby="termsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsModalLabel">Conditions d'utilisation</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h4>Conditions Générales d'Utilisation de la Plateforme Objets Perdus & Trouvés</h4>
+                    <p>En vous inscrivant sur notre plateforme, vous acceptez les conditions suivantes :</p>
+                    <ol>
+                        <li>Toutes les informations fournies lors de la déclaration d'un objet doivent être exactes et précises.</li>
+                        <li>Toute annonce publiée est soumise à validation par nos équipes avant publication.</li>
+                        <li>La mise en relation entre déclarants et propriétaires se fait via notre plateforme pour garantir la sécurité des échanges.</li>
+                        <li>Nous nous réservons le droit de supprimer tout contenu inapproprié ou frauduleux.</li>
+                        <li>Les informations personnelles collectées sont utilisées uniquement dans le cadre du service proposé.</li>
+                    </ol>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">J'ai compris</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

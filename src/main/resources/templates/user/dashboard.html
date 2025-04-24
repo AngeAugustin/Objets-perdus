@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: header('Tableau de bord')}"></head>
+<body>
+    <!-- Barre de navigation -->
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    
+    <div class="container mt-4">
+        <!-- Messages d'alerte -->
+        <div th:replace="~{fragments/messages :: alerts}"></div>
+        
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <h2 class="mb-3"><i class="fas fa-tachometer-alt me-2"></i> Tableau de bord</h2>
+                <p class="lead">Bienvenue, <span th:text="${user.firstname + ' ' + user.lastname}">Utilisateur</span> !</p>
+            </div>
+        </div>
+        
+        <!-- Statistiques rapides -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm h-100 bg-primary text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Objets perdus</h5>
+                                <h3 class="card-text mb-0" th:text="${lostItems.totalElements}">0</h3>
+                            </div>
+                            <i class="fas fa-search fa-3x"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a th:href="@{/user/lost-items}" class="text-primary text-decoration-none">
+                            Voir tous mes objets perdus <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm h-100 bg-success text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Objets trouvés</h5>
+                                <h3 class="card-text mb-0" th:text="${foundItems.totalElements}">0</h3>
+                            </div>
+                            <i class="fas fa-hand-holding fa-3x"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a th:href="@{/user/found-items}" class="text-success text-decoration-none">
+                            Voir tous mes objets trouvés <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="card shadow-sm h-100 bg-info text-white">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <h5 class="card-title">Notifications</h5>
+                                <h3 class="card-text mb-0" th:text="${unreadNotifications}">0</h3>
+                            </div>
+                            <i class="fas fa-bell fa-3x"></i>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white">
+                        <a th:href="@{/user/notifications}" class="text-info text-decoration-none">
+                            Voir toutes mes notifications <i class="fas fa-arrow-right ms-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Actions rapides -->
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="fas fa-bolt me-2"></i> Actions rapides</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <a th:href="@{/lost-items/create}" class="btn btn-primary btn-lg d-block">
+                                    <i class="fas fa-search me-2"></i> Déclarer un objet perdu
+                                </a>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <a th:href="@{/found-items/create}" class="btn btn-success btn-lg d-block">
+                                    <i class="fas fa-hand-holding me-2"></i> Déclarer un objet trouvé
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <!-- Derniers objets perdus -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-search me-2"></i> Mes derniers objets perdus</h5>
+                        <a th:href="@{/user/lost-items}" class="btn btn-sm btn-outline-primary">Voir tout</a>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${lostItems.isEmpty()}" class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> Vous n'avez pas encore déclaré d'objet perdu.
+                        </div>
+                        
+                        <div class="list-group" th:unless="${lostItems.isEmpty()}">
+                            <a th:each="item : ${lostItems}" th:href="@{/lost-items/{id}(id=${item.id})}" 
+                               class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1" th:text="${item.title}">Titre de l'objet</h6>
+                                    <span class="badge" th:classappend="${item.status.name() == 'PENDING' ? 'bg-warning' : (item.status.name() == 'APPROVED' ? 'bg-success' : 'bg-danger')}" 
+                                          th:text="${item.statusDisplayName}">Statut</span>
+                                </div>
+                                <p class="mb-1 text-truncate" th:text="${item.description}">Description</p>
+                                <small class="text-muted">
+                                    <span th:text="${item.categoryDisplayName}">Catégorie</span> - 
+                                    <span th:text="${#temporals.format(item.date, 'dd/MM/yyyy')}">Date</span>
+                                </small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Derniers objets trouvés -->
+            <div class="col-md-6 mb-4">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0"><i class="fas fa-hand-holding me-2"></i> Mes derniers objets trouvés</h5>
+                        <a th:href="@{/user/found-items}" class="btn btn-sm btn-outline-success">Voir tout</a>
+                    </div>
+                    <div class="card-body">
+                        <div th:if="${foundItems.isEmpty()}" class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> Vous n'avez pas encore déclaré d'objet trouvé.
+                        </div>
+                        
+                        <div class="list-group" th:unless="${foundItems.isEmpty()}">
+                            <a th:each="item : ${foundItems}" th:href="@{/found-items/{id}(id=${item.id})}" 
+                               class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1" th:text="${item.title}">Titre de l'objet</h6>
+                                    <span class="badge" th:classappend="${item.status.name() == 'PENDING' ? 'bg-warning' : (item.status.name() == 'APPROVED' ? 'bg-success' : 'bg-danger')}" 
+                                          th:text="${item.statusDisplayName}">Statut</span>
+                                </div>
+                                <p class="mb-1 text-truncate" th:text="${item.description}">Description</p>
+                                <small class="text-muted">
+                                    <span th:text="${item.categoryDisplayName}">Catégorie</span> - 
+                                    <span th:text="${#temporals.format(item.date, 'dd/MM/yyyy')}">Date</span>
+                                </small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>

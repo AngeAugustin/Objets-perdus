@@ -1,0 +1,199 @@
+/* Styles personnalisés pour l'application Objets Perdus & Trouvés */
+
+/* Couleurs principales */
+:root {
+    --primary-color: #1976d2;
+    --secondary-color: #f50057;
+    --success-color: #43a047;
+    --warning-color: #ff9800;
+    --danger-color: #e53935;
+    --info-color: #00acc1;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --gray-color: #6c757d;
+    --white-color: #ffffff;
+}
+
+/* Styles généraux */
+body {
+    font-family: 'Roboto', sans-serif;
+    color: var(--dark-color);
+    background-color: #f5f5f5;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1 0 auto;
+}
+
+footer {
+    flex-shrink: 0;
+    margin-top: auto;
+}
+
+/* Navigation */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+/* Cards */
+.card {
+    border: none;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    border-bottom: none;
+    font-weight: 600;
+}
+
+/* Boutons */
+.btn {
+    border-radius: 0.25rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #1565c0;
+    border-color: #1565c0;
+}
+
+.btn-success {
+    background-color: var(--success-color);
+    border-color: var(--success-color);
+}
+
+.btn-success:hover {
+    background-color: #388e3c;
+    border-color: #388e3c;
+}
+
+/* Badges */
+.badge {
+    font-weight: 500;
+    border-radius: 0.25rem;
+    padding: 0.35em 0.65em;
+}
+
+/* Alertes */
+.alert {
+    border: none;
+    border-radius: 0.25rem;
+}
+
+/* Forms */
+.form-control, .form-select {
+    border-radius: 0.25rem;
+    border: 1px solid #ced4da;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 0.2rem rgba(25, 118, 210, 0.25);
+}
+
+/* Page d'accueil */
+.hero-section {
+    background-color: #e3f2fd;
+    padding: 4rem 0;
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Animation pour les listes d'items */
+.list-group-item {
+    transition: background-color 0.2s ease;
+}
+
+.list-group-item:hover {
+    background-color: #f5f5f5;
+}
+
+/* Pages de détail */
+.image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: 0.5rem;
+}
+
+.item-details {
+    padding: 1.5rem;
+}
+
+/* Tableau de bord */
+.stats-card {
+    text-align: center;
+    padding: 1.5rem;
+}
+
+.stats-card i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--primary-color);
+}
+
+/* Pagination */
+.pagination .page-link {
+    color: var(--primary-color);
+    border: 1px solid #dee2e6;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .navbar-brand {
+        font-size: 1.2rem;
+    }
+    
+    .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    .d-md-flex {
+        display: block !important;
+    }
+}
+
+/* Admin Dashboard */
+.admin-sidebar {
+    border-right: 1px solid #dee2e6;
+    height: 100%;
+}
+
+.admin-sidebar .nav-link {
+    color: var(--dark-color);
+    padding: 0.75rem 1rem;
+    border-radius: 0.25rem;
+    margin-bottom: 0.25rem;
+    transition: all 0.3s ease;
+}
+
+.admin-sidebar .nav-link:hover, .admin-sidebar .nav-link.active {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+}

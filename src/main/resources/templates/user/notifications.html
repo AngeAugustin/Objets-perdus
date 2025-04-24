@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: header('Mes notifications')}"></head>
+<body>
+    <!-- Barre de navigation -->
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    
+    <div class="container mt-4">
+        <!-- Messages d'alerte -->
+        <div th:replace="~{fragments/messages :: alerts}"></div>
+        
+        <div class="row">
+            <div class="col-md-12 mb-4">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a th:href="@{/user/dashboard}">Tableau de bord</a></li>
+                        <li class="breadcrumb-item active" aria-current="page">Mes notifications</li>
+                    </ol>
+                </nav>
+                
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2><i class="fas fa-bell me-2"></i> Mes notifications</h2>
+                    <form th:action="@{/user/notifications/mark-all-read}" method="post">
+                        <button type="submit" class="btn btn-outline-primary" th:disabled="${notifications.isEmpty()}">
+                            <i class="fas fa-check-double me-2"></i> Tout marquer comme lu
+                        </button>
+                    </form>
+                </div>
+                
+                <div class="card shadow">
+                    <div class="card-body">
+                        <div th:if="${notifications.isEmpty()}" class="alert alert-info">
+                            <i class="fas fa-info-circle me-2"></i> Vous n'avez aucune notification.
+                        </div>
+                        
+                        <div class="list-group" th:unless="${notifications.isEmpty()}">
+                            <div th:each="notification : ${notifications}" 
+                                 class="list-group-item list-group-item-action" 
+                                 th:classappend="${!notification.read ? 'list-group-item-light' : ''}">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1" th:text="${notification.title}">Titre de la notification</h5>
+                                    <small th:text="${#temporals.format(notification.createdAt, 'dd/MM/yyyy HH:mm')}">Date</small>
+                                </div>
+                                <p class="mb-1" th:text="${notification.message}">Message de la notification</p>
+                                <div class="d-flex justify-content-end">
+                                    <button th:if="${!notification.read}" th:data-id="${notification.id}" class="btn btn-sm btn-outline-primary mark-read-btn">
+                                        <i class="fas fa-check me-1"></i> Marquer comme lu
+                                    </button>
+                                    <span th:if="${notification.read}" class="badge bg-success"><i class="fas fa-check me-1"></i> Lu</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Pagination -->
+                        <div class="d-flex justify-content-center mt-4" th:if="${totalPages > 0}">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination">
+                                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                        <a class="page-link" th:href="@{/user/notifications(page=0, size=${notifications.size})}" aria-label="First">
+                                            <span aria-hidden="true">&laquo;&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                        <a class="page-link" th:href="@{/user/notifications(page=${currentPage - 1}, size=${notifications.size})}" aria-label="Previous">
+                                            <span aria-hidden="true">&laquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item" th:each="i : ${#numbers.sequence(0, totalPages - 1)}" th:classappend="${currentPage == i} ? 'active'">
+                                        <a class="page-link" th:href="@{/user/notifications(page=${i}, size=${notifications.size})}" th:text="${i + 1}">1</a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                        <a class="page-link" th:href="@{/user/notifications(page=${currentPage + 1}, size=${notifications.size})}" aria-label="Next">
+                                            <span aria-hidden="true">&raquo;</span>
+                                        </a>
+                                    </li>
+                                    <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                        <a class="page-link" th:href="@{/user/notifications(page=${totalPages - 1}, size=${notifications.size})}" aria-label="Last">
+                                            <span aria-hidden="true">&raquo;&raquo;</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- JavaScript pour marquer les notifications comme lues -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const markReadButtons = document.querySelectorAll('.mark-read-btn');
+            
+            markReadButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const notificationId = this.getAttribute('data-id');
+                    markAsRead(notificationId, this);
+                });
+            });
+            
+            function markAsRead(notificationId, button) {
+                fetch(`/objets-perdus/user/notifications/${notificationId}/mark-read`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+                    }
+                })
+                .then(response => response.text())
+                .then(result => {
+                    if (result === 'success') {
+                        // Remplacer le bouton par un badge "Lu"
+                        const parent = button.parentElement;
+                        button.remove();
+                        
+                        const badge = document.createElement('span');
+                        badge.className = 'badge bg-success';
+                        badge.innerHTML = '<i class="fas fa-check me-1"></i> Lu';
+                        parent.appendChild(badge);
+                        
+                        // Supprimer la classe de fond pour les non lus
+                        const listItem = parent.closest('.list-group-item');
+                        listItem.classList.remove('list-group-item-light');
+                        
+                        // Mettre à jour le compteur de notifications
+                        const badgeElement = document.querySelector('.navbar .badge');
+                        if (badgeElement) {
+                            let count = parseInt(badgeElement.textContent);
+                            if (count > 0) {
+                                count--;
+                                if (count === 0) {
+                                    badgeElement.style.display = 'none';
+                                } else {
+                                    badgeElement.textContent = count;
+                                }
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                });
+            }
+        });
+    </script>
+    
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

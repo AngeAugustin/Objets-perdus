@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/header :: header('Connexion')}"></head>
+<body>
+    <!-- Barre de navigation -->
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h4 class="mb-0"><i class="fas fa-sign-in-alt me-2"></i> Connexion</h4>
+                    </div>
+                    <div class="card-body p-4">
+                        <!-- Messages d'alerte -->
+                        <div th:replace="~{fragments/messages :: alerts}"></div>
+                        
+                        <div th:if="${param.error}" class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-2"></i> Email ou mot de passe incorrect.
+                        </div>
+                        
+                        <div th:if="${param.logout}" class="alert alert-success">
+                            <i class="fas fa-check-circle me-2"></i> Vous avez été déconnecté avec succès.
+                        </div>
+                        
+                        <form th:action="@{/auth/login}" method="post">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Adresse email</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" class="form-control" id="username" name="username" 
+                                           placeholder="Entrez votre email" required autofocus>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Mot de passe</label>
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                                    <input type="password" class="form-control" id="password" name="password" 
+                                           placeholder="Entrez votre mot de passe" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3 form-check">
+                                <input type="checkbox" class="form-check-input" id="remember-me" name="remember-me">
+                                <label class="form-check-label" for="remember-me">Se souvenir de moi</label>
+                            </div>
+                            
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-primary btn-lg">Se connecter</button>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="card-footer bg-light text-center py-3">
+                        <p class="mb-0">Pas encore de compte? <a th:href="@{/auth/register}" class="text-primary">S'inscrire</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>

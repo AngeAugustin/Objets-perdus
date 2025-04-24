@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/header :: header('Accueil')}"></head>
+<body>
+    <!-- Barre de navigation -->
+    <nav th:replace="~{fragments/navbar :: navbar}"></nav>
+    
+    <!-- Messages d'alerte -->
+    <div class="container mt-4">
+        <div th:replace="~{fragments/messages :: alerts}"></div>
+    </div>
+    
+    <!-- Hero Section -->
+    <section class="py-5 text-center container">
+        <div class="row py-lg-5">
+            <div class="col-lg-8 col-md-10 mx-auto">
+                <h1 class="fw-bold">Objets Perdus & Trouvés</h1>
+                <p class="lead text-muted">
+                    Une plateforme simple et efficace pour déclarer vos objets perdus et retrouver ce que vous avez perdu.
+                </p>
+                <div class="d-grid gap-2 d-sm-flex justify-content-sm-center">
+                    <a th:href="@{/lost-items/create}" class="btn btn-primary btn-lg px-4 gap-3" sec:authorize="isAuthenticated()">
+                        <i class="fas fa-search me-2"></i> Déclarer un objet perdu
+                    </a>
+                    <a th:href="@{/found-items/create}" class="btn btn-success btn-lg px-4" sec:authorize="isAuthenticated()">
+                        <i class="fas fa-hand-holding me-2"></i> Déclarer un objet trouvé
+                    </a>
+                    <a th:href="@{/auth/register}" class="btn btn-outline-primary btn-lg px-4" sec:authorize="!isAuthenticated()">
+                        <i class="fas fa-user-plus me-2"></i> Inscription
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Section Recherche -->
+    <section class="py-4 bg-light">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h3 class="card-title text-primary">Objets perdus récents</h3>
+                            <div th:if="${recentLostItems.isEmpty()}" class="alert alert-info">
+                                Aucun objet perdu récent
+                            </div>
+                            <div th:unless="${recentLostItems.isEmpty()}">
+                                <div class="list-group">
+                                    <a th:each="item : ${recentLostItems}" th:href="@{/lost-items/{id}(id=${item.id})}" 
+                                       class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1" th:text="${item.title}">Titre de l'objet</h5>
+                                            <small th:text="${#temporals.format(item.date, 'dd/MM/yyyy')}">Date</small>
+                                        </div>
+                                        <p class="mb-1 text-truncate" th:text="${item.description}">Description</p>
+                                        <small th:text="'Catégorie: ' + ${item.categoryDisplayName}">Catégorie</small>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <a th:href="@{/lost-items}" class="btn btn-outline-primary">Voir tous les objets perdus</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        <div class="card-body">
+                            <h3 class="card-title text-success">Objets trouvés récents</h3>
+                            <div th:if="${recentFoundItems.isEmpty()}" class="alert alert-info">
+                                Aucun objet trouvé récent
+                            </div>
+                            <div th:unless="${recentFoundItems.isEmpty()}">
+                                <div class="list-group">
+                                    <a th:each="item : ${recentFoundItems}" th:href="@{/found-items/{id}(id=${item.id})}" 
+                                       class="list-group-item list-group-item-action">
+                                        <div class="d-flex w-100 justify-content-between">
+                                            <h5 class="mb-1" th:text="${item.title}">Titre de l'objet</h5>
+                                            <small th:text="${#temporals.format(item.date, 'dd/MM/yyyy')}">Date</small>
+                                        </div>
+                                        <p class="mb-1 text-truncate" th:text="${item.description}">Description</p>
+                                        <small th:text="'Catégorie: ' + ${item.categoryDisplayName}">Catégorie</small>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3">
+                                <a th:href="@{/found-items}" class="btn btn-outline-success">Voir tous les objets trouvés</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Comment ça fonctionne -->
+    <section class="py-5 container">
+        <h2 class="text-center mb-5">Comment ça fonctionne</h2>
+        <div class="row">
+            <div class="col-md-4 mb-4">
+                <div class="card text-center h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-user-plus fa-4x text-primary"></i>
+                        </div>
+                        <h4 class="card-title">1. Créez un compte</h4>
+                        <p class="card-text">Inscrivez-vous gratuitement en quelques secondes pour accéder à tous nos services.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card text-center h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-clipboard-list fa-4x text-primary"></i>
+                        </div>
+                        <h4 class="card-title">2. Déclarez un objet</h4>
+                        <p class="card-text">Perdu quelque chose ou trouvé un objet? Déclarez-le en détaillant sa description.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4">
+                <div class="card text-center h-100 shadow-sm">
+                    <div class="card-body">
+                        <div class="mb-3">
+                            <i class="fas fa-comments fa-4x text-primary"></i>
+                        </div>
+                        <h4 class="card-title">3. Prenez contact</h4>
+                        <p class="card-text">Une fois validée, votre annonce est publiée et permet une mise en relation sécurisée.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+</body>
+</html>
