@@ -1,5 +1,6 @@
 
 Récapitulatif du Projet
+
 Nous avons développé une application Java EE complète avec Spring Boot 3.3 et Java 21 pour la gestion des objets perdus et trouvés. Voici les principales fonctionnalités implémentées :
 1.	Authentification sécurisée
 o	Enregistrement et connexion d'utilisateurs
